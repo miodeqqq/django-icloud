@@ -147,23 +147,23 @@ SUIT_CONFIG = {
 }
 
 # Celery
-# CELERYBEAT_SCHEDULE = {
-#     # get_user_devices_task
-#     'get_user_devices_task': {
-#         'task': 'get_user_devices_task',
-#         'schedule': crontab(minute='*/5')
-#     },
-#     # get_user_iphone_status_task
-#     'get_user_iphone_status_task': {
-#         'task': 'get_user_iphone_status_task',
-#         'schedule': crontab(minute='*/5')
-#     },
-#     # get_user_iphone_location_task
-#     'get_user_iphone_location_task': {
-#         'task': 'get_user_iphone_location_task',
-#         'schedule': crontab()
-#     },
-# }
+CELERYBEAT_SCHEDULE = {
+    # get_user_devices_task
+    'get_user_devices_task': {
+        'task': 'get_user_devices_task',
+        'schedule': crontab(minute='*/20')
+    },
+    # get_user_iphone_status_task
+    'get_user_iphone_status_task': {
+        'task': 'get_user_iphone_status_task',
+        'schedule': crontab(minute='*/15')
+    },
+    # get_user_iphone_location_task
+    'get_user_iphone_location_task': {
+        'task': 'get_user_iphone_location_task',
+        'schedule': crontab(minute='*/5')
+    },
+}
 
 CELERY_IMPORTS = [
     'core.tasks',
