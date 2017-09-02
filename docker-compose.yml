@@ -1,0 +1,72 @@
+version: '2'
+services:
+  postgres:
+    restart: always
+    image: postgres:9.6
+    container_name: icloud_db
+    volumes:
+     - /var/lib/postgresql
+
+  web:
+    image: icloud
+    container_name: icloud_web
+    command: ./docker-entrypoint-web.sh
+    ports:
+      - "4000:8000"
+    volumes:
+      - .:/code
+    links:
+      - postgres:postgres
+    depends_on:
+      - postgres
+
+  rabbitmq:
+    image: rabbitmq:3.6-management
+    container_name: icloud_rabbitmq
+    hostname: 'rabbitmq'
+    restart: always
+
+  celery_beat:
+    image: icloud
+    container_name: icloud_celery_beat
+    command: ./run_celery_beat.sh
+    links:
+      - postgres:postgres
+      - rabbitmq
+    depends_on:
+      - rabbitmq
+    volumes_from:
+      - web
+    restart: always
+
+  celery_worker_update:
+    image: icloud
+    container_name: icloud_celery_update
+    command: ./run_celery_worker.sh
+    environment:
+      - C_FORCE_ROOT=1
+    links:
+      - postgres:postgres
+      - rabbitmq
+    depends_on:
+      - rabbitmq
+    volumes_from:
+      - web
+
+  celery_flower:
+    image: icloud
+    container_name: icloud_celery_flower
+    command: ./run_celery_flower.sh
+    ports:
+      - "4001:5555"
+    links:
+      - rabbitmq
+      - postgres:postgres
+    depends_on:
+      - celery_worker_update
+    environment:
+      - C_FORCE_ROOT=1
+      - DATABASE_HOST=postgres:postgres
+    volumes_from:
+      - web
+    restart: always
