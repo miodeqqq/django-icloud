@@ -113,7 +113,7 @@ class iPhoneLastKnownLocationAdmin(admin.ModelAdmin):
         if obj.latitude and obj.longitude:
             location_name = obj.found_location_name
 
-            return '<a href="/map/{obj_pk}/" target="_blank">{location_name}</a>'.format(
+            return '<a href="/map/{obj_pk}/" target="_blank">Show location on map</a>'.format(
                 obj_pk=obj.pk,
                 location_name=location_name
             )
