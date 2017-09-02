@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-
+from django import forms
 from django.contrib import admin
+from django.db import models
 from djcelery.models import (TaskState, WorkerState, IntervalSchedule)
 from solo.admin import SingletonModelAdmin
 
@@ -11,7 +12,15 @@ from core.models import iPhoneLastKnownLocation, UserDevices
 
 @admin.register(GoogleMapsAPIKey)
 class GoogleMapsAPIKeyAdmin(SingletonModelAdmin):
-    pass
+    formfield_overrides = {
+        models.CharField: {
+            'widget': forms.Textarea(attrs={
+                'rows': 1,
+                'cols': 40,
+                'style': 'width: 65%;',
+            })
+        }
+    }
 
 
 @admin.register(UserAuthentication)
