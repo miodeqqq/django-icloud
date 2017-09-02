@@ -9,7 +9,7 @@ from core.utils import get_icloud_api_object
 logger = logging.getLogger(__name__)
 
 
-def backoff(self, attempts):
+def backoff(attempts):
     """
     Returns a backoff delay, in seconds, given a number of attempts.
 
@@ -48,7 +48,7 @@ def get_user_devices_task(self):
         logging.info('[Get user devices task] Error --> {exc}'.format(exc=exc))
 
         self.retry(
-            countdown=self.backoff(self.request.retries),
+            countdown=backoff(self.request.retries),
             exc=exc
         )
 
@@ -86,7 +86,7 @@ def get_user_iphone_status_task(self):
         logging.info('[iPhone status task] Error --> {exc}'.format(exc=exc))
 
         self.retry(
-            countdown=self.backoff(self.request.retries),
+            countdown=backoff(self.request.retries),
             exc=exc
         )
 
@@ -146,6 +146,6 @@ def get_user_iphone_location_task(self):
         logging.info('[iPhone last known location task] Error --> {exc}'.format(exc=exc))
 
         self.retry(
-            countdown=self.backoff(self.request.retries),
+            countdown=backoff(self.request.retries),
             exc=exc
         )
