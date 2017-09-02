@@ -52,8 +52,6 @@ class iPhoneStatusAdmin(SingletonModelAdmin):
         'battery_level',
     )
 
-    list_per_page = 30
-
     def get_battery_percentage(self, obj):
         """
         Returns iPhone's battery percentage status.

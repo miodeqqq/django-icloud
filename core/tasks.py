@@ -76,12 +76,13 @@ def get_user_iphone_status_task(self):
     device_name = get_user_iphone_info.get('name')
 
     try:
-        iPhoneStatus.objects.get_or_create(
-            iphone_name=device_name,
-            device_display_name=device_display_name,
-            battery_level=device_battery_level,
-            device_status=device_status
-        )
+        iphone = iPhoneStatus.get_solo()
+        iphone.iphone_name=device_name
+        iphone.device_display_name=device_display_name
+        iphone.battery_level=device_battery_level
+        iphone.device_status=device_status
+        iphone.save()
+
     except Exception as exc:
         logging.info('[iPhone status task] Error --> {exc}'.format(exc=exc))
 
