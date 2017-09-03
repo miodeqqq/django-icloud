@@ -152,32 +152,34 @@ SUIT_CONFIG = {
     ),
 }
 
+task_time_utc = lambda: datetime.datetime.now(pytz.timezone('UTC'))
+
 # Celery
 CELERYBEAT_SCHEDULE = {
     # get_user_devices_task
     'get_user_devices_task': {
         'task': 'get_user_devices_task',
-        'schedule': crontab(minute=0, hour='*/8')
+        'schedule': crontab(minute=0, hour='*/8', nowfun=task_time_utc)
     },
     # get_user_iphone_status_task
     'get_user_iphone_status_task': {
         'task': 'get_user_iphone_status_task',
-        'schedule': crontab(minute='*/15')
+        'schedule': crontab(minute='*/15', nowfun=task_time_utc)
     },
     # get_user_iphone_location_task
     'get_user_iphone_location_task': {
         'task': 'get_user_iphone_location_task',
-        'schedule': crontab(minute='*/5')
+        'schedule': crontab(minute='*/5', nowfun=task_time_utc)
     },
     # get_user_contacts_task
     'get_user_contacts_task': {
         'task': 'get_user_contacts_task',
-        'schedule': crontab(minute=0, hour='*/4')
+        'schedule': crontab(minute=0, hour='*/4', nowfun=task_time_utc)
     },
     # get_user_calendar_events_task
     'get_user_calendar_events_task': {
         'task': 'get_user_calendar_events_task',
-        'schedule': crontab(minute=0, hour='*/1')
+        'schedule': crontab(minute=0, hour='*/1', nowfun=task_time_utc)
     },
 }
 
@@ -211,5 +213,3 @@ BROKER_TRANSPORT_OPTIONS = {'confirm_publish': True}
 
 BROKER_HEARTBEAT = 30
 BROKER_URL += '?heartbeat={heartbeat}'.format(heartbeat=BROKER_HEARTBEAT)
-
-task_time_utc = lambda: datetime.datetime.now(pytz.timezone('UTC'))
