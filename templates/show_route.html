@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>iCloud manager - last known locations of iPhone - draw map</title>
+    <meta charset="UTF-8" name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&libraries=visualization"></script>
+    <script>
+        function initialize() {
+            var homeLatlng = new google.maps.LatLng({{ start_coordinate }},0);
+            var myOptions = {
+                zoom: 15,
+                center: homeLatlng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+            var arrCoords = [
+                {% for coordinate in coordinates %}
+                    new google.maps.LatLng({{ coordinate.0 }}, {{ coordinate.1 }}),
+                {% endfor %}
+                ];
+            // draw the route on the map
+            var route = new google.maps.Polyline({
+                path: arrCoords,
+                strokeColor: "#E22828",
+                strokeOpacity: 1.0,
+                strokeWeight: 4,
+                geodesic: false,
+                map: map
+            });
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+</head>
+<body>
+<div id="map_canvas"></div>
+</body>
+</html>

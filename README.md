@@ -12,7 +12,7 @@ https://github.com/picklepete/pyicloud
 
 * Maciej Januszewski (maciek@mjanuszewski.pl)
 * Current stable version: v1.0
-* Release date: 02.09.2017
+* Release date: 03.09.2017
 
 # Pre-requirements:
 #### **Config file (config.txt):**

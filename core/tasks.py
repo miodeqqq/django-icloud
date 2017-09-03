@@ -3,7 +3,9 @@
 import logging
 
 from celery import shared_task
+from django.utils.timezone import now
 
+from core.models import ExceptionStorage
 from core.utils import get_icloud_api_object
 
 logger = logging.getLogger(__name__)
@@ -37,15 +39,22 @@ def get_user_devices_task(self):
     api = get_icloud_api_object()
     get_user_data = get_user_devices(api)
 
-    user_devices = [x for x in get_user_data]
+    user_devices = [x for x in get_user_data if x]
 
     try:
         for user_device in user_devices:
             UserDevices.objects.get_or_create(
                 device_name=user_device
             )
+
     except Exception as exc:
         logging.info('[Get user devices task] Error --> {exc}'.format(exc=exc))
+
+        ExceptionStorage.objects.create(
+            task_type=1,
+            error_message=exc,
+            timestamp=now()
+        )
 
         self.retry(
             countdown=backoff(self.request.retries),
@@ -77,14 +86,20 @@ def get_user_iphone_status_task(self):
 
     try:
         iphone = iPhoneStatus.get_solo()
-        iphone.iphone_name=device_name
-        iphone.device_display_name=device_display_name
-        iphone.battery_level=device_battery_level
-        iphone.device_status=device_status
+        iphone.iphone_name = device_name
+        iphone.device_display_name = device_display_name
+        iphone.battery_level = device_battery_level
+        iphone.device_status = device_status
         iphone.save()
 
     except Exception as exc:
         logging.info('[iPhone status task] Error --> {exc}'.format(exc=exc))
+
+        ExceptionStorage.objects.create(
+            task_type=2,
+            error_message=exc,
+            timestamp=now()
+        )
 
         self.retry(
             countdown=backoff(self.request.retries),
@@ -146,7 +161,112 @@ def get_user_iphone_location_task(self):
     except Exception as exc:
         logging.info('[iPhone last known location task] Error --> {exc}'.format(exc=exc))
 
+        ExceptionStorage.objects.create(
+            task_type=3,
+            error_message=exc,
+            timestamp=now()
+        )
+
         self.retry(
             countdown=backoff(self.request.retries),
             exc=exc
         )
+
+
+@shared_task(
+    name='get_user_contacts_task',
+    queue='update_icloud_data',
+    max_retries=10,
+    bind=True,
+)
+def get_user_contacts_task(self):
+    """
+    Celery task to call iCloud API and retrieve all contacts data.
+    """
+
+    from core.models import iCloudContact
+    from core.utils import get_user_contacts_data, get_user_contacts
+
+    api = get_icloud_api_object()
+    contacts_data = get_user_contacts(api)
+    contacts = get_user_contacts_data(contacts_data)
+
+    if contacts:
+        try:
+            for contact in contacts:
+                iCloudContact.objects.get_or_create(
+                    contact_id=contact[0],
+                    first_name=contact[1],
+                    middle_name=contact[2],
+                    last_name=contact[3],
+                    photo_url=contact[4],
+                    etag=contact[5],
+                    is_company=contact[6],
+                    normalized=contact[7],
+                    phone_number=contact[8],
+                    phone_label=contact[9],
+                    prefix=contact[10],
+                    suffix=contact[11]
+                )
+
+        except Exception as exc:
+            logging.info('[iPhone contacts task] Error --> {exc}'.format(exc=exc))
+
+            ExceptionStorage.objects.create(
+                task_type=4,
+                error_message=exc,
+                timestamp=now()
+            )
+
+            self.retry(
+                countdown=backoff(self.request.retries),
+                exc=exc
+            )
+
+
+@shared_task(
+    name='get_user_calendar_events_task',
+    queue='update_icloud_data',
+    max_retries=10,
+    bind=True,
+)
+def get_user_calendar_events_task(self):
+    """
+    Celery task to call iCloud API and retrieve all calendar events data.
+    """
+
+    from core.models import iCloudCalendar
+    from core.utils import get_user_calendar_events, get_user_calendar_events_data
+
+    api = get_icloud_api_object()
+    calendar_data = get_user_calendar_events(api)
+    calendars = get_user_calendar_events_data(calendar_data)
+
+    if calendars:
+        try:
+            for calendar_item in calendars:
+                iCloudCalendar.objects.get_or_create(
+                    start_date=calendar_item[0],
+                    end_date=calendar_item[1],
+                    local_start_date=calendar_item[2],
+                    local_end_date=calendar_item[3],
+                    title=calendar_item[4],
+                    tz=calendar_item[5],
+                    is_all_day=calendar_item[6],
+                    duration=calendar_item[7],
+                    p_guid=calendar_item[8],
+                )
+
+        except Exception as exc:
+            logging.info('[iPhone calendar task] Error --> {exc}'.format(exc=exc))
+
+            ExceptionStorage.objects.create(
+                task_type=5,
+                error_message=exc,
+                timestamp=now()
+            )
+
+            self.retry(
+                countdown=backoff(self.request.retries),
+                exc=exc
+            )

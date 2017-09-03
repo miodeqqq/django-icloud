@@ -11,6 +11,19 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='ExceptionStorage',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
+                ('task_type', models.PositiveSmallIntegerField(verbose_name='Task type', db_index=True, choices=[(1, 'get_user_devices_task'), (2, 'get_user_iphone_status_task'), (3, 'get_user_iphone_location_task'), (4, 'get_user_contacts_task'), (5, 'get_user_calendar_events_task'), (6, 'send_message_to_iphone')])),
+                ('error_message', models.TextField(verbose_name='Error message')),
+                ('timestamp', models.DateTimeField(verbose_name='Timestamp', auto_now_add=True)),
+            ],
+            options={
+                'verbose_name': 'Error',
+                'verbose_name_plural': 'Errors',
+            },
+        ),
+        migrations.CreateModel(
             name='GoogleMapsAPIKey',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
@@ -18,6 +31,47 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name': 'Google Maps API key',
+            },
+        ),
+        migrations.CreateModel(
+            name='iCloudCalendar',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
+                ('start_date', models.DateTimeField(verbose_name='Start date', db_index=True, editable=False)),
+                ('end_date', models.DateTimeField(verbose_name='End date', db_index=True, editable=False)),
+                ('local_start_date', models.DateTimeField(verbose_name='Local start date', db_index=True, editable=False)),
+                ('local_end_date', models.DateTimeField(verbose_name='Local end date', db_index=True, editable=False)),
+                ('title', models.CharField(verbose_name='Title', max_length=255, blank=True, null=True, db_index=True)),
+                ('tz', models.CharField(verbose_name='TZ', max_length=255, blank=True, null=True, db_index=True)),
+                ('is_all_day', models.BooleanField(verbose_name='Is all day ?', db_index=True, default=False)),
+                ('duration', models.PositiveSmallIntegerField(verbose_name='Duration', blank=True, null=True, db_index=True)),
+                ('p_guid', models.CharField(verbose_name='P Guid', max_length=255, blank=True, null=True, db_index=True)),
+            ],
+            options={
+                'verbose_name': 'iCloud calendar event',
+                'verbose_name_plural': 'iCloud calendar events',
+            },
+        ),
+        migrations.CreateModel(
+            name='iCloudContact',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
+                ('contact_id', models.CharField(verbose_name='Contact ID', max_length=255, unique=True, db_index=True)),
+                ('first_name', models.CharField(verbose_name='First name', max_length=255, blank=True, null=True, db_index=True)),
+                ('middle_name', models.CharField(verbose_name='Middle name', max_length=255, blank=True, null=True, db_index=True)),
+                ('last_name', models.CharField(verbose_name='Last name', max_length=255, blank=True, null=True, db_index=True)),
+                ('photo_url', models.URLField(verbose_name='Photo URL', max_length=500, blank=True, null=True, db_index=True)),
+                ('etag', models.CharField(verbose_name='Etag', max_length=255, blank=True, null=True, db_index=True)),
+                ('is_company', models.BooleanField(verbose_name='Is company?', db_index=True, default=False)),
+                ('normalized', models.CharField(verbose_name='Normalized', max_length=255, blank=True, null=True, db_index=True)),
+                ('phone_number', models.CharField(verbose_name='Phone number(s)', max_length=255, blank=True, null=True, db_index=True)),
+                ('phone_label', models.CharField(verbose_name='Phone label', max_length=255, blank=True, null=True, db_index=True)),
+                ('prefix', models.CharField(verbose_name='Prefix', max_length=255, blank=True, null=True, db_index=True)),
+                ('suffix', models.CharField(verbose_name='Suffix', max_length=255, blank=True, null=True, db_index=True)),
+            ],
+            options={
+                'verbose_name': 'iCloud contact',
+                'verbose_name_plural': 'iCloud contacts',
             },
         ),
         migrations.CreateModel(
@@ -53,7 +107,7 @@ class Migration(migrations.Migration):
                 ('device_status', models.CharField(verbose_name='Device status', max_length=255, blank=True, db_index=True)),
             ],
             options={
-                'verbose_name': 'iPhone device status',
+                'verbose_name': 'iPhone status',
             },
         ),
         migrations.CreateModel(
@@ -78,7 +132,7 @@ class Migration(migrations.Migration):
                 ('password', models.CharField(verbose_name='Password', max_length=255, db_index=True)),
             ],
             options={
-                'verbose_name': "User's authentication",
+                'verbose_name': "iCloud User's authentication",
             },
         ),
         migrations.CreateModel(
@@ -88,8 +142,8 @@ class Migration(migrations.Migration):
                 ('device_name', models.CharField(verbose_name='Device', max_length=255, blank=True)),
             ],
             options={
-                'verbose_name': 'User device',
-                'verbose_name_plural': "User's devices",
+                'verbose_name': 'iCloud device',
+                'verbose_name_plural': "iCloud's devices",
             },
         ),
     ]

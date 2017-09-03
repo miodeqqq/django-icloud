@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 import django
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "icloud.settings")
@@ -16,14 +17,17 @@ def create_icloud_user_and_gm_api_key():
 
     data = {}
 
-    try:
-        with open('./config.txt', 'r') as f:
-            for line in f:
-                key, val = line.strip().split()
-                data[key] = val
-    except IOError:
-        print('No such file!')
-        return 0
+    config_file = './config.txt'
+
+    if os.path.exists(config_file):
+        try:
+            with open(config_file, 'r') as f:
+                for line in f:
+                    key, val = line.strip().split()
+                    data[key] = val
+        except IOError:
+            print('No such file!')
+            return 0
 
     # iCloud user
     user = UserAuthentication.get_solo()

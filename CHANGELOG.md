@@ -1,4 +1,10 @@
 ### Version v1.0
+**Release date: 03.09.2017**
+
+* Added new methods and Celery tasks for retrieving iCloud's calendar events and contacts;
+* General cleanup and improvements;
+
+
 **Release date: 02.09.2017**
 
 * Initial commit;

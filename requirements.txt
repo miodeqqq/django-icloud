@@ -22,7 +22,6 @@ entrypoints==0.2.3
 flower==0.9.2
 geojson==2.1.0
 geopy==1.11.0
-gmplot==1.1.1
 gunicorn==19.7.1
 html5lib==0.999999999
 idna==2.6

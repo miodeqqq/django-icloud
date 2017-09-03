@@ -139,9 +139,15 @@ SUIT_CONFIG = {
         '-',
         {'app': 'core', 'label': u'iCloud stats', 'icon': 'icon-list', 'models': (
             'iphonestatus',
+            'icloudcontact',
+            'icloudcalendar',
             'iphonelastknownlocation',
             'userdevices',
             'sendmessagetoiphone',
+        )},
+        '-',
+        {'app': 'core', 'label': u'Errors', 'icon': 'icon-heart', 'models': (
+            'exceptionstorage',
         )},
     ),
 }
@@ -151,7 +157,7 @@ CELERYBEAT_SCHEDULE = {
     # get_user_devices_task
     'get_user_devices_task': {
         'task': 'get_user_devices_task',
-        'schedule': crontab(minute='*/20')
+        'schedule': crontab(minute=0, hour='*/8')
     },
     # get_user_iphone_status_task
     'get_user_iphone_status_task': {
@@ -162,6 +168,16 @@ CELERYBEAT_SCHEDULE = {
     'get_user_iphone_location_task': {
         'task': 'get_user_iphone_location_task',
         'schedule': crontab(minute='*/5')
+    },
+    # get_user_contacts_task
+    'get_user_contacts_task': {
+        'task': 'get_user_contacts_task',
+        'schedule': crontab(minute=0, hour='*/4')
+    },
+    # get_user_calendar_events_task
+    'get_user_calendar_events_task': {
+        'task': 'get_user_calendar_events_task',
+        'schedule': crontab(minute=0, hour='*/1')
     },
 }
 
