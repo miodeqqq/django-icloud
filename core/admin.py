@@ -4,7 +4,6 @@ from django import forms
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from django.db import models
-from djcelery.models import (TaskState, WorkerState, IntervalSchedule)
 from solo.admin import SingletonModelAdmin
 
 from core.models import SendMessageToiPhone, GoogleMapsAPIKey, iCloudCalendar
@@ -354,6 +353,6 @@ class SendMessageToiPhoneAdmin(admin.ModelAdmin):
 
 
 # we're not using these modules
-admin.site.unregister(WorkerState)
-admin.site.unregister(TaskState)
-admin.site.unregister(IntervalSchedule)
+# admin.site.unregister(WorkerState)
+# admin.site.unregister(TaskState)
+# admin.site.unregister(IntervalSchedule)

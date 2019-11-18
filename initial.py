@@ -15,31 +15,17 @@ def create_icloud_user_and_gm_api_key():
     Initial script for creating iCloud user and Google Maps Static API Key.
     """
 
-    data = {}
-
-    config_file = './config.txt'
-
-    if os.path.exists(config_file):
-        try:
-            with open(config_file, 'r') as f:
-                for line in f:
-                    key, val = line.strip().split()
-                    data[key] = val
-        except IOError:
-            print('No such file!')
-            return 0
-
     # iCloud user
     user = UserAuthentication.get_solo()
 
-    user.email = data.get('icloud_user')
-    user.password = data.get('icloud_password')
+    user.email = os.environ.get('ICLOUD_USER')
+    user.password = os.environ.get('ICLOUD_PASSWORD')
     user.save()
 
     # Google Maps Static API key
     gm = GoogleMapsAPIKey.get_solo()
 
-    gm.api_key = data.get('gm_api_key')
+    gm.api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
     gm.save()
 
 

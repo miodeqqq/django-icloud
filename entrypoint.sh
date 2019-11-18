@@ -1,25 +1,28 @@
 #!/bin/bash
+
 set -e
 
 echo "${0}: running migrations."
 python manage.py migrate
 
-echo "from django.contrib.auth.models import User; print(\"Admin exists\") if User.objects.filter(username='admin').exists() else User.objects.create_superuser('admin', 'maciek@mjanuszewski.pl', 'admin')" | python manage.py shell
+echo "from django.contrib.auth.models import User; print(\"Admin exists\") if User.objects.filter(username='$DJANGO_USER').exists() else User.objects.create_superuser('$DJANGO_USER', '$DJANGO_MAIL', '$DJANGO_PASSWORD')" | python manage.py shell
 
 echo "${0}: creating icloud user and google maps api key."
-python initial.py
+python manage.py initial_data
 
 echo "${0}: collecting statics."
-python manage.py collectstatic --noinput -l
+python manage.py collectstatic --noinput
 
 echo "${0}: starting gunicorn."
 
 gunicorn icloud.wsgi:application \
-  --name root \
-  --bind 0.0.0.0:8000 \
-  --timeout 900 \
-  --workers 10 \
-  --log-level=info \
-  --log-file=-
-  "$@"
+	--name=root \
+	--bind=0.0.0.0:8000 \
+	--timeout=900 \
+	--workers=3 \
+	--threads=3 \
+	--log-level=info \
+	--reload
+
+exec "$@"
 

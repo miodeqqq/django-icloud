@@ -1,22 +1,49 @@
-FROM python:3.6
+FROM python:3.7.4-alpine3.9
 
 MAINTAINER Maciej Januszewski<maciek@mjanuszewski.pl>
 
 ENV PYTHONUNBUFFERED 1
 
-RUN mkdir /code
-WORKDIR /code
+ENV PG_VERSION 11.6-r0
 
-RUN apt-get update -y && apt-get install -y --no-install-recommends \
-    postgresql-contrib \
-    build-essential \
-    checkinstall \
-    vim && \
-    rm -rf /var/lib/apt/lists/*
+COPY requirements.txt /tmp/
 
-COPY requirements.txt /code/
-RUN pip install -r requirements.txt
+RUN set -ex \
+		&& apk add --no-cache \
+			 gcc \
+			 g++ \
+			 postgresql-dev=$PG_VERSION \
+			 libjpeg-turbo-dev \
+			 libffi-dev \
+			 musl-dev \
+			 jpeg-dev \
+			 zlib-dev \
+			 freetype-dev \
+			 lcms2-dev \
+			 openjpeg-dev \
+			 tiff-dev \
+			 tk-dev \
+			 tcl-dev \
+			 harfbuzz-dev \
+			 fribidi-dev \
+			 linux-headers \
+		&& apk add --no-cache \
+			 gettext \
+			 bash \
+			 libmagic \
+			 postgresql-client=$PG_VERSION \
+		&& apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
+		        openssl \
+				libressl2.7-libcrypto \
+		&& apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
+			 gdal-dev \
+		&& pip install --upgrade pip \
+		&& pip install --no-cache-dir -r /tmp/requirements.txt && rm -rf /tmp/
 
-COPY . /code/
+RUN mkdir /src
 
-RUN chmod +x *.sh
+WORKDIR /src
+
+COPY . /src
+
+EXPOSE 8000
