@@ -6,7 +6,6 @@ from celery import shared_task
 from django.utils.timezone import now
 
 from core.models import ExceptionStorage
-from core.utils import get_icloud_api_object
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +33,7 @@ def get_user_devices_task(self):
     """
 
     from core.models import UserDevices
-    from core.utils import get_user_devices
+    from core.utils import get_user_devices, get_icloud_api_object
 
     api = get_icloud_api_object()
     get_user_data = get_user_devices(api)
@@ -74,7 +73,7 @@ def get_user_iphone_status_task(self):
     """
 
     from core.models import iPhoneStatus
-    from core.utils import get_user_iphone_status
+    from core.utils import get_user_iphone_status, get_icloud_api_object
 
     api = get_icloud_api_object()
     get_user_iphone_info = get_user_iphone_status(api)
@@ -121,6 +120,7 @@ def get_user_iphone_location_task(self):
     from core.models import iPhoneLastKnownLocation
     from datetime import datetime
     from core.utils import get_user_iphone_location, get_found_location_name
+    from core.utils import get_icloud_api_object
 
     api = get_icloud_api_object()
     get_user_iphone_info = get_user_iphone_location(api)
@@ -186,6 +186,7 @@ def get_user_contacts_task(self):
 
     from core.models import iCloudContact
     from core.utils import get_user_contacts_data, get_user_contacts
+    from core.utils import get_icloud_api_object
 
     api = get_icloud_api_object()
     contacts_data = get_user_contacts(api)
@@ -237,6 +238,7 @@ def get_user_calendar_events_task(self):
 
     from core.models import iCloudCalendar
     from core.utils import get_user_calendar_events, get_user_calendar_events_data
+    from core.utils import get_icloud_api_object
 
     api = get_icloud_api_object()
     calendar_data = get_user_calendar_events(api)

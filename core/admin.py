@@ -4,6 +4,7 @@ from django import forms
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from django.db import models
+from django.utils.safestring import mark_safe
 from solo.admin import SingletonModelAdmin
 
 from core.models import SendMessageToiPhone, GoogleMapsAPIKey, iCloudCalendar
@@ -296,10 +297,10 @@ class iPhoneLastKnownLocationAdmin(admin.ModelAdmin):
         if obj.latitude and obj.longitude:
             location_name = obj.found_location_name
 
-            return '<a href="/map/{obj_pk}/" target="_blank">Show location on map</a>'.format(
+            return mark_safe('<a href="/map/{obj_pk}/" target="_blank">Show location on map</a>'.format(
                 obj_pk=obj.pk,
                 location_name=location_name
-            )
+            ))
 
         return '<span style="color:red">Not yet...</span>'
 

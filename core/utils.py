@@ -3,7 +3,6 @@
 from datetime import datetime
 
 from django.core.exceptions import ObjectDoesNotExist
-from geopy.geocoders import Nominatim
 from pyicloud import PyiCloudService
 from requests import RequestException
 
@@ -94,6 +93,8 @@ def get_found_location_name(latitude, longitude):
     """
     Returns found location name with given coordinates.
     """
+
+    from geopy.geocoders import Nominatim
 
     geolocator = Nominatim()
 

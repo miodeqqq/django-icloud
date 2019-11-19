@@ -58,33 +58,12 @@ services:
     ports:
       - "6379:6379"
 
-  celery_beat:
-    image: icloud
-    command: ./run_celery_beat.sh
-    environment:
-      - C_FORCE_ROOT=1
-      - DATABASE_HOST=postgres
-      - SECRET_KEY=$SECRET_KEY
-      - DATABASE_URL=postgres://$USER:$PASSWORD@postgres:$DB_PORT/$DB_NAME
-    links:
-      - postgres
-      - redis
-    depends_on:
-      - redis
-    volumes_from:
-      - web
-    restart: always
-    env_file:
-      - .env
-
   celery_worker:
     restart: always
     image: maciekj
     command: ./run_celery_worker.sh
     environment:
-      - C_FORCE_ROOT=1
       - DATABASE_HOST=postgres
-      - SECRET_KEY=$SECRET_KEY
       - DATABASE_URL=postgres://$USER:$PASSWORD@postgres:$DB_PORT/$DB_NAME
     links:
       - postgres

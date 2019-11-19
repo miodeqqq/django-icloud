@@ -37,6 +37,7 @@ RUN set -ex \
 				libressl2.7-libcrypto \
 		&& apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing \
 			 gdal-dev \
+			 geos-dev \
 		&& pip install --upgrade pip \
 		&& pip install --no-cache-dir -r /tmp/requirements.txt && rm -rf /tmp/
 
