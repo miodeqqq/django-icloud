@@ -5,7 +5,7 @@ Babel==2.7.0
 backcall==0.1.0
 billiard==3.3.0.23
 bitstring==3.1.6
-celery==3.1.25
+celery==5.2.2
 certifi==2019.9.11
 cffi==1.13.2
 chardet==3.0.4
